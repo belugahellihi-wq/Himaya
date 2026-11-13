@@ -1,0 +1,30 @@
+name: Publish Himaya 1.3
+on:
+  push:
+    branches: [release/himaya-1.3]
+permissions: {}
+jobs:
+  publish:
+    if: github.repository == 'belugahellihi-wq/Himaya'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TAG: v1.3.0
+      APK: Himaya-1.3.0-preview.apk
+      APK_SHA256: 63b076345fa646fbf2a221dc6f048fead3aab698d80a875d1519a8eff9bae398
+    steps:
+      - name: Verify and publish signed APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$GH_REPO/contents/release/$APK?ref=$GITHUB_SHA" --jq .content | base64 --decode > "$APK"
+          gh api "repos/$GH_REPO/contents/release/NOTES.md?ref=$GITHUB_SHA" --jq .content | base64 --decode > notes.md
+          printf '%s  %s\n' "$APK_SHA256" "$APK" > SHA256SUMS.txt
+          sha256sum --check SHA256SUMS.txt
+          gh release create "$TAG" "$APK" SHA256SUMS.txt --target "$GITHUB_SHA" --title 'Himaya 1.3' --notes-file notes.md --draft --prerelease
+          gh release view "$TAG" --json assets --jq '.assets[].name' | grep -Fx "$APK"
+          gh release edit "$TAG" --draft=false --prerelease

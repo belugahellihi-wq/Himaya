@@ -1,0 +1,11 @@
+<resources>
+    <style name="HimayaTheme" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">#9DF0C2</item>
+        <item name="android:windowBackground">#071411</item>
+        <item name="android:colorBackground">#0F221C</item>
+        <item name="android:statusBarColor">#071411</item>
+        <item name="android:navigationBarColor">#071411</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
